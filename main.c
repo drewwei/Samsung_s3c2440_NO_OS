@@ -87,8 +87,8 @@ int main(void)
 	unsigned char buff2[30];
 	int i;
 	//unsigned char buff3 = 0x3;
-	SPIWriteData(0, buff1, sizeof(buff1));
-	SPIReadData(0, buff2, 30);
+	SpiFlashWriteData(0, buff1, sizeof(buff1));
+	SpiFlashReadData(0, buff2, 30);
 	for(i = 0; i < 30; i++)
 	{
 		printf("%#02x", buff2[i]);

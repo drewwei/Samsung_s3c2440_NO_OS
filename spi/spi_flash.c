@@ -225,7 +225,7 @@ int SectorProgram(unsigned int addr, unsigned char *data)
 }
 
 /*读数据*/
-void SPIReadData(unsigned int addr, unsigned char *data, int size)
+void SpiFlashReadData(unsigned int addr, unsigned char *data, int size)
 {
 	int i = 0;
 	int ret = BusyStatus();
@@ -256,7 +256,7 @@ void SPIReadData(unsigned int addr, unsigned char *data, int size)
  * addr%PAGELEN: 从该页的第几列开始写
  */
 unsigned char buff[SECTORSIZE];
-void SPIWriteData(unsigned int addr, const unsigned char *data, int size)
+void SpiFlashWriteData(unsigned int addr, const unsigned char *data, int size)
 {
 	int i;
 	int sectremain;
@@ -271,7 +271,7 @@ void SPIWriteData(unsigned int addr, const unsigned char *data, int size)
 	//BlockErase(blcok); //先确定擦除块！
 	//SectorErase(sect);//再确定擦除哪页！	
 
-	SPIReadData(sect*SECTORSIZE, buff, SECTORSIZE);	/* 先读取要写的扇区 */
+	SpiFlashReadData(sect*SECTORSIZE, buff, SECTORSIZE);	/* 先读取要写的扇区 */
 
 	SectorErase(sect); /* 然后擦除该扇区 */
 
@@ -306,7 +306,7 @@ void SPIWriteData(unsigned int addr, const unsigned char *data, int size)
 			i++;
 		}
 		sect++;
-		SPIReadData(sect*SECTORSIZE, buff, SECTORSIZE);	/* 从最后一个要写的扇区读出数据 */
+		SpiFlashReadData(sect*SECTORSIZE, buff, SECTORSIZE);	/* 从最后一个要写的扇区读出数据 */
 		SectorErase(sect);	/* 然后擦除该扇区 */
 		for(i = 0; i <lastsectremain; i++ )
 		{

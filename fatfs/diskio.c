@@ -103,7 +103,7 @@ DRESULT disk_read (
 	case DEV_FLASH :
 		// translate the arguments here
 		
-		SPIReadData(addr, buff, count*SECTOR_SIZE);
+		SpiFlashReadData(addr, buff, count*SECTOR_SIZE);
 
 		// translate the reslut code here
 
@@ -153,7 +153,7 @@ DRESULT disk_write (
 		// translate the arguments here
 	
 	
-			SPIWriteData(addr, buff, count*SECTOR_SIZE);			
+			SpiFlashWriteData(addr, buff, count*SECTOR_SIZE);			
 
 		// translate the reslut code here
 

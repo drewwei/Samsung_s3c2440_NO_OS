@@ -2,7 +2,6 @@ ENTRY(_start)
 SECTIONS {
     . = 0x30000000;
     .text : {  
-                head.o (.text)
                 *(.text)                  
             }
     
