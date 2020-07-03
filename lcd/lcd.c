@@ -32,12 +32,11 @@ struct lcd_params lcd_4_3_parmas = {
 	.fb_base = LCD_FB_BASE,
 };
 
-extern struct lcd_controller s3c2440_lcd_controller;
-
-void lcd_init(void)
+void lcd_init(const char * name)
 {
-	register_lcd_controller(&s3c2440_lcd_controller);
-	select_lcd_controller("s3c2440");
-	lcd_controller_init(&lcd_4_3_parmas);
-	lcd_controller_enable();	
+	p_lcd_controller_t p_lcd_controller;
+
+	p_lcd_controller = select_lcd_controller(name);		/* 按名字找到要初始化的LCD控制器 */
+	lcd_controller_init(p_lcd_controller, &lcd_4_3_parmas);		/* 初始化该控制器 */
+	lcd_controller_enable(p_lcd_controller);	/* 使能lcd */
 }

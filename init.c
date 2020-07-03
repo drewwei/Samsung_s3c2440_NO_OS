@@ -25,11 +25,23 @@ void init_gpio(void)
 	GPECON &= ~((3 << 28)|(3 << 30));										/* GPE14,GPE15配置成iic*/
 	GPECON |=  ((2 << 28)|(2 << 30));
 	GPEUP  |=  0xc000;       // 禁止内部上拉
+	
+	GPFDAT &= ~((1<<4)|(1<<5)|(1<<6));  /*输出低电平*/
+}
 
+void led_blink(void)
+{		/* led闪烁 */
+		GPFDAT  &= ~(1<<5);
+		mdelay(500);
+		GPFDAT  |= (1<<5);
+		mdelay(500);
 }
 
 
-
+int raise(void)
+{
+	return 0;
+}
 
 
 

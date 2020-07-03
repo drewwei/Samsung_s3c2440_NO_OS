@@ -19,6 +19,13 @@
 #define IICADD              (*(volatile unsigned char *)0x54000008)
 #define IICDS               (*(volatile unsigned char *)0x5400000C)
 /* SPI registers */
+#define	SPCON0		(*(volatile unsigned long *)0x59000000)
+#define	SPSTA0		(*(volatile unsigned long *)0x59000004)
+#define	SPPIN0		(*(volatile unsigned long *)0x59000008)
+#define	SPPRE0		(*(volatile unsigned long *)0x5900000C)
+#define	SPTDAT0	    (*(volatile unsigned char *)0x59000010)
+#define	SPRDAT0	    (*(volatile unsigned char *)0x59000014)
+
 #define SPCON1   	(*(volatile unsigned *)0x59000020) // spi1 control
 #define SPSTA1  	(*(volatile unsigned *)0x59000024) // spi1 status
 #define SPPRE1 		(*(volatile unsigned *)0x5900002C) //Baud rate = PCLK / 2 / (Prescaler value + 1) 

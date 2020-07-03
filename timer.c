@@ -2,6 +2,7 @@
 #include "s3c24xx.h"
 #include "irq_num.h"
 #include "int.h"
+#include "sound/sound.h"
 #include "lib/string.h"
 /*Timer input clock Frequency = PCLK / {prescaler value+1} / {divider value} = 50M/5/2=5M ; cycle = 0.2us*/
 
@@ -125,8 +126,9 @@ void mdelay(unsigned int time)
 }
 
 void timer0_handler(void)
-{
+{	
 	g_system_time_10ms_cnt++;
+	
 }
 unsigned long long get_system_time_us(void)
 {

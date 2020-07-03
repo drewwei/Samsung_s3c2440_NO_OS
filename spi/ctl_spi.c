@@ -28,7 +28,12 @@ void GPIO_SPI_Init()
 
 static void SPIStatus()
 {
-	while(!(SPSTA1 & 1));
+	int count = 0xffff;
+	while(!(SPSTA1 & 1))
+	{
+		if(!count)	break;
+		count--;
+	}		
 }
 static void SetClockMode(int mode)
 {
@@ -67,8 +72,9 @@ void SPI_SendByte(unsigned char c)
 /**/
 unsigned char SPI_RevByte()
 {
+	int ret;
 	SPTDAT1 = 0xff;
-	SPIStatus();   
+	SPIStatus();
 	return SPRDAT1;
 	
 }

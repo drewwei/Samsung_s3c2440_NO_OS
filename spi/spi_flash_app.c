@@ -2,6 +2,7 @@
 #include "timer.h"
 #include "int.h"
 #include "stdio.h"
+
 void spi_flash(void)
 {
 	/*
@@ -18,24 +19,24 @@ void spi_flash(void)
 				break;
 			case 'r':
 				
-				ReadData(0, (unsigned char *)0x33c00000, 305280);
+				SPIReadData(0, (unsigned char *)0x33c00000, 305280);
 				mdelay(1000);
-				ReadData(305280, (unsigned char *)0x33c00000, 345600);
+				SPIReadData(305280, (unsigned char *)0x33c00000, 345600);
 				mdelay(1000);
-				ReadData(305280+345600, (unsigned char *)0x33c00000, 259200);
+				SPIReadData(305280+345600, (unsigned char *)0x33c00000, 259200);
 				mdelay(1000);
-				ReadData(305280+345600+259200, (unsigned char *)0x33c00000, 307200);
+				SPIReadData(305280+345600+259200, (unsigned char *)0x33c00000, 307200);
 				break;
 
 			}
 	*/
-	ReadData(0, (unsigned char *)0x33c00000, 305280);
+	SPIReadData(0, (unsigned char *)0x33c00000, 305280);
 	mdelay(1000);
-	ReadData(305280, (unsigned char *)0x33c00000, 345600);
+	SPIReadData(305280, (unsigned char *)0x33c00000, 345600);
 	mdelay(1000);
-	ReadData(305280+345600, (unsigned char *)0x33c00000, 259200);
+	SPIReadData(305280+345600, (unsigned char *)0x33c00000, 259200);
 	mdelay(1000);
-	ReadData(305280+345600+259200, (unsigned char *)0x33c00000, 307200);	
+	SPIReadData(305280+345600+259200, (unsigned char *)0x33c00000, 307200);	
 	mdelay(1000);
 }
 

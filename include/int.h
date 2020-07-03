@@ -13,7 +13,7 @@ extern int register_irq(unsigned int offset, void(*handler)(void), unsigned int 
 extern void init_interrupt(void);
 
 extern void iic_init(void);
-
+extern void led_blink(void);
 
 struct timer_list{
 	unsigned int expire;

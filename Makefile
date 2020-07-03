@@ -1,4 +1,3 @@
-
 CROSS_COMPILE = arm-linux-
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
@@ -15,12 +14,16 @@ export AS LD CC CPP AR NM
 export STRIP OBJCOPY OBJDUMP
 
 
-CFLAGS = -Wall -O2 -g -fno-builtin
-#CFLAGS += -I $(shell pwd)/include
 
-LDFLAGS := -Tint.lds
+CFLAGS := -Wall -O2 -g -fno-builtin -static
+#INCFLAGS += -I $(shell pwd)/include
 
-export CFLAGS LDFLAGS
+
+
+#LIBFAGS = -lc -L./lib -lgcc -L/usr/local/arm/4.3.2/lib/gcc/arm-none-linux-gnueabi/4.3.2
+LDFLAGS := -Tint.lds 
+
+export CFLAGS LDFLAGS 
 
 TOPDIR := $(shell pwd)
 export TOPDIR
@@ -28,7 +31,7 @@ export TOPDIR
 TARGET := drew
 
 
-obj-y += start.o
+obj-y += head.o
 obj-y += main.o
 obj-y += nand.o
 obj-y += uart.o
@@ -37,12 +40,15 @@ obj-y += init.o
 obj-y += isr.o
 obj-y += dma.o
 obj-y += interrupt.o
+obj-y += fat_app.o
 obj-y += i2c/
 obj-y += spi/
 obj-y += lcd/
-obj-y += NEC/
+obj-y += 1-wire/
+obj-y += infrared/
 obj-y += lib/
-
+obj-y += sound/
+obj-y += fatfs/
 
 all : 
 	make -C ./ -f $(TOPDIR)/Makefile.build 

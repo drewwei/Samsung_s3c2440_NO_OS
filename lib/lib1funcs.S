@@ -212,7 +212,7 @@ Boston, MA 02111-1307, USA.  */
 5:
 .endm
 
-
+ENTRY(__aeabi_uidiv)
 ENTRY(__udivsi3)
 
 	subs	r2, r1, #1
@@ -237,7 +237,8 @@ ENTRY(__udivsi3)
 	mov	r0, r0, lsr r2
 	mov	pc, lr
 
-
+ENTRY(__aeabi_uidivmod)
+ENTRY(__aeabi_uldivmod)
 ENTRY(__umodsi3)
 
 	subs	r2, r1, #1			@ compare divisor with 1
@@ -252,7 +253,7 @@ ENTRY(__umodsi3)
 
 	mov	pc, lr
 
-
+ENTRY(__aeabi_idiv)
 ENTRY(__divsi3)
 
 	cmp	r1, #0
@@ -289,7 +290,6 @@ ENTRY(__divsi3)
 	mov	r0, r3, lsr r2
 	rsbmi	r0, r0, #0
 	mov	pc, lr
-
 
 ENTRY(__modsi3)
 

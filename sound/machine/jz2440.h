@@ -1,0 +1,1 @@
+void jz2440_init(void);

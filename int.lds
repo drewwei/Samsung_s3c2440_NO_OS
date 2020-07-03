@@ -1,6 +1,10 @@
+ENTRY(_start)
 SECTIONS {
     . = 0x30000000;
-    .text : { *(.text) }
+    .text : {  
+                head.o (.text)
+                *(.text)                  
+            }
     
     . = ALIGN(4);
     .rodata : {*(.rodata*)} 

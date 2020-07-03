@@ -1,4 +1,5 @@
 #include "s3c24xx.h"
+#include "stdio.h"
 #define LARGER_NAND_PAGE
 
 #define GSTATUS1        (*(volatile unsigned int *)0x560000B0)
@@ -16,7 +17,7 @@
 
 /* 供外部调用的函数 */
 void nand_init(void);
-void nand_read(unsigned char *buf, unsigned long start_addr, int size);
+void nand_read(unsigned char *buf, unsigned int start_addr, unsigned int size);
 
 /* S3C2440的NAND Flash处理函数 */
 static void s3c2440_nand_reset(void);
@@ -128,35 +129,53 @@ void nand_init(void)
 		num += 11;
 }
 
+#ifdef LARGER_NAND_PAGE
+	#define   SECTOR_SIZE	NAND_SECTOR_SIZE_LP
+#else
+	#define   SECTOR_SIZE	NAND_SECTOR_SIZE  
+#endif
 
 /* 读函数 */
-void nand_read(unsigned char *buf, unsigned long start_addr, int size)
+void nand_read(unsigned char *buf, unsigned int start_addr, unsigned int size)
 {
     int i, j;
-
+	int pre_i;
+	unsigned char data;
+	//j = start_addr%SECTOR_SIZE;
+	if(start_addr & NAND_BLOCK_MASK_LP)	/* 必须从一页的开头开始读 */
+	{
+		printf("nand addr is invalid\r\n");
+		return;
+	}
     /* 选中芯片 */
     s3c2440_nand_select_chip();
 
-    for(i=start_addr; i < (start_addr + size);) {
-      /* 发出READ0命令 */
-      s3c2440_write_cmd(0);
+    for(i=start_addr; i < (start_addr + size); )
+	{
+		/* 发出READ0命令 */
+		s3c2440_write_cmd(0);
 
-      /* Write Address */
-      s3c2440_write_addr_lp(i);
+		/* Write Address */
+		s3c2440_write_addr_lp(i);
+	#ifdef LARGER_NAND_PAGE
+		s3c2440_write_cmd(0x30);		
+	#endif
+		s3c2440_wait_idle();
 
-#ifdef LARGER_NAND_PAGE
-      s3c2440_write_cmd(0x30);		
-#endif
-      s3c2440_wait_idle();
-
-#ifdef LARGER_NAND_PAGE
-      for(j = i%2048; j < NAND_SECTOR_SIZE_LP; j++, i++) {
-#else
-	  for(j=0; j < NAND_SECTOR_SIZE; j++, i++) {
-#endif
-          *buf = s3c2440_read_data();
-          buf++;
-      }
+		pre_i = i;
+			
+		for(j = 0; j < SECTOR_SIZE; j++, i++) {
+			buf[i - start_addr] = s3c2440_read_data();		/* 读一次nand的页缓存指针往后移动一格 */	  
+			  //buf++;
+		}
+#if 1		  
+		data = s3c2440_read_data(); /* 读OOB区，如果该字节不为0xff则该块为坏块，跳过该坏块 */  
+		if(data != 0xff)
+		{
+			i = pre_i;
+		}
+#endif	  
+		//j = 0;
     }
 
     /* 取消片选信号 */
@@ -166,9 +185,14 @@ void nand_read(unsigned char *buf, unsigned long start_addr, int size)
 }
 
 /* 读函数 */
-void nand_write(unsigned char *buf, unsigned long start_addr, int size)
+void nand_write(unsigned char *buf, unsigned int start_addr, unsigned int size)
 {
     int i, j;
+    if(start_addr & NAND_BLOCK_MASK_LP)	/* 必须从一页的开头开始写 */
+	{
+		printf("nand addr is invalid\r\n");
+		return;
+	}
 
     /* 选中芯片 */
     s3c2440_nand_select_chip();
@@ -180,14 +204,10 @@ void nand_write(unsigned char *buf, unsigned long start_addr, int size)
       /* Write Address */
       s3c2440_write_addr_lp(i);
      
-#ifdef LARGER_NAND_PAGE
-      for(j = i%2048; j < NAND_SECTOR_SIZE_LP; j++, i++) {
-#else
-	  for(j=0; j < NAND_SECTOR_SIZE; j++, i++) {
-#endif
+    for(j = 0; j < SECTOR_SIZE; j++, i++) {
           NFDATA = *buf;
           buf++;
-      }
+    }
 
        s3c2440_write_cmd(0x10);
        s3c2440_wait_idle();

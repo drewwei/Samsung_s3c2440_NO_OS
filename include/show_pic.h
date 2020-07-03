@@ -4,7 +4,4 @@
 extern void show_pic_16(const unsigned char * database);
 
 extern unsigned char *p[];	
-
-
-
 #endif

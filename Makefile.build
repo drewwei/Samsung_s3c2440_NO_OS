@@ -24,9 +24,8 @@ subdir_objs := $(foreach f,$(subdir-y),$(f)/built-in.o)
 # cur_objs : a.o b.o
 # dep_files : a.o.d b.o.d
 cur_objs := $(filter-out %/, $(obj-y))
-#dep_files := $(foreach f,$(cur_objs),.$(f).d)  有误？
-dep_files := $(foreach f,$(cur_objs),$(f).d)
-dep_files := $(wildcard $(dep_files))
+_dep_files := $(foreach f,$(cur_objs),.$(f).d)
+dep_files := $(wildcard $(_dep_files))
 
 ifneq ($(dep_files),)
   include $(dep_files)
@@ -44,13 +43,14 @@ $(subdir-y):
 built-in.o : $(cur_objs) $(subdir_objs)
 	$(LD) -r -o $@ $^
 
-#dep_file = .$@.d
-dep_file = $@.d
+dep_file = .$@.d
 
+#-Wp,-MD,会生成相应的依赖文件,cat该文件可以看到依赖的.c和.h文件
 %.o : %.c
-	$(CC) $(CFLAGS) -Wp,-MD,$(dep_file) -c -o $@ $<
-	
+	$(CC) $(CFLAGS) -Wp,-MD,$(dep_file) -c -o $@ $< 
+
 %.o : %.S
-	$(CC) $(CFLAGS) -Wp,-MD,$(dep_file) -c -o $@ $<
-	
+	$(CC) $(CFLAGS) -Wp,-MD,$(dep_file) -c -o $@ $< 
+
+
 .PHONY : $(PHONY)

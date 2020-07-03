@@ -11,9 +11,6 @@
 #ifndef __I2C_H__
 #define __I2C_H__
 
-
-
-
 struct i2c_msg {
 	unsigned int addr;   /*7bit device address*/
 	enum {
@@ -29,5 +26,11 @@ struct i2c_controller {
 	void (*master_xfer)(struct i2c_msg * , unsigned int );
 	const char *name;
 };
+
+
+#include "at24cxx.h"
+#include "s3c2440_i2c.h"
+#include "i2c_core.h"
+
 
 #endif    //__2440IIC_H__

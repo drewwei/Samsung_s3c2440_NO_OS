@@ -1,6 +1,7 @@
-#include "s3c24xx.h"
+#include "../include/s3c24xx.h"
 #include "klist.h"
 #include "lcd.h"
+#include "lcd_controller.h"
 
 
 void jz2440_lcd_pin_init(void)
@@ -141,7 +142,10 @@ struct lcd_controller s3c2440_lcd_controller = {
 	.disable = s3c2440_lcd_controller_disable,
 };
 
-
+void regist_s3c2440_lcd_controller(void)
+{
+	register_lcd_controller(&s3c2440_lcd_controller);
+}
 
 
 

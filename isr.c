@@ -38,6 +38,7 @@ void eint0_handler(void)      //外部中断0中断服务函数isr
 	Start_DMA();
 }
 /************以下中断服务函数均为测试用****************/
+
 void eint2_handler(void)
 { 
 	mdelay(10);
@@ -55,9 +56,7 @@ void eint2_handler(void)
 		offset = MAX-1;
 		show_pic_16(p[offset]);
 		}
-	}
-	
-	
+	}	
 }
 /*从spiflash地址处读到现存*/
 extern void spi_flash(void);
@@ -95,7 +94,6 @@ void switch_pic(void)
 char a[60];
 extern void (*glob_func)(void);
 extern void spi_flash(void);
-extern void dump(void);
 void uart_recv_handler(void)
 {
 	/*
@@ -134,7 +132,7 @@ void uart_recv_handler(void)
 		glob_func = switch_pic;
 	}
 	else if(!strcmp(a,"AT+SWPIC=0")) {	
-		glob_func = dump;
+		glob_func = led_blink;
 	}
 	else if(!strcmp(a,"AT+SWPIC=2")) {	
 		glob_func = spi_flash;
