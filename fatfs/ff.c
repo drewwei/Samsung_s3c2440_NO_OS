@@ -3303,8 +3303,16 @@ static UINT check_fs (	/* 0:FAT VBR, 1:exFAT VBR, 2:Valid BS but not FAT, 3:Inva
 	if (FF_FS_EXFAT && !mem_cmp(fs->win + BS_JmpBoot, "\xEB\x76\x90" "EXFAT   ", 11)) return 1;	/* Check if exFAT VBR */
 
 	if (fs->win[BS_JmpBoot] == 0xE9 || fs->win[BS_JmpBoot] == 0xEB || fs->win[BS_JmpBoot] == 0xE8) {	/* Valid JumpBoot code? */
-		if (!mem_cmp(fs->win + BS_FilSysType, "FAT", 3)) return 0;		/* Is it an FAT VBR? */
-		if (!mem_cmp(fs->win + BS_FilSysType32, "FAT32", 5)) return 0;	/* Is it an FAT32 VBR? */
+		if (!mem_cmp(fs->win + BS_FilSysType, "FAT", 3))
+		{
+			printf("fs stype is FAT\r\n");
+			return 0;		/* Is it an FAT VBR? */
+		}		
+		if (!mem_cmp(fs->win + BS_FilSysType32, "FAT32", 5)) 
+		{
+			printf("fs stype is FAT32\r\n");
+			return 0;	/* Is it an FAT32 VBR? */
+		}
 	}
 	return 2;	/* Valid BS but not FAT */
 }

@@ -1,3 +1,7 @@
+#ifndef     _IRQ_NUM_H
+#define     _IRQ_NUM_H
+
+
 #define	IRQ_LEN 		 (14+56+1)
 
 #define	INT_AC97 		 (14+56) 
@@ -74,5 +78,5 @@
 
 
 
-
+#endif
 

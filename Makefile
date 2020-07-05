@@ -15,13 +15,13 @@ export STRIP OBJCOPY OBJDUMP
 
 
 
-CFLAGS := -Wall -O2 -g -fno-builtin -static
-#INCFLAGS += -I $(shell pwd)/include
+CFLAGS := -Wall -O2 -g -fno-builtin
+#CFLAGS += -I $(shell pwd)/include
 
 
 
-#LIBFAGS = -lc -L./lib -lgcc -L/usr/local/arm/4.3.2/lib/gcc/arm-none-linux-gnueabi/4.3.2
-LDFLAGS := -Tint.lds 
+LIBFAGS = -lc -L./lib -lgcc -L/usr/local/arm/4.3.2/lib/gcc/arm-none-linux-gnueabi/4.3.2
+LDFLAGS := -T myboot.lds 
 
 export CFLAGS LDFLAGS 
 
@@ -52,7 +52,7 @@ obj-y += fatfs/
 
 all : 
 	make -C ./ -f $(TOPDIR)/Makefile.build 
-	$(LD) $(LDFLAGS) -o $(TARGET) built-in.o
+	$(LD) $(LDFLAGS) -o $(TARGET) built-in.o $(LIBFAGS)
 	${OBJCOPY} -O binary -S $(TARGET) $(TARGET).bin
 	${OBJDUMP} -D -m arm $(TARGET) > $(TARGET).dis
 	

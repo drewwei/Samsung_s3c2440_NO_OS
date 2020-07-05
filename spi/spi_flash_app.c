@@ -41,7 +41,37 @@ void spi_flash(void)
 }
 
 
-
+void spi_flash_app()
+{
+	const unsigned char buff1[] = "Everything will be ok!";
+	unsigned char buff2[30];
+	int i;
+	char c;
+	//unsigned char buff3 = 0x3;
+	while(1)
+	{
+		c = getc();
+		switch (c)
+		{
+		case 'w':
+		case 'W':
+			SpiFlashWriteData(0, buff1, sizeof(buff1));
+			printf("SpiFlashWriteData\r\n");
+			break;
+		case 'r':
+		case 'R':
+			SpiFlashReadData(0, buff2, 30);
+			for(i = 0; i < 30; i++)
+			{
+				printf("%c ", buff2[i]);
+			}
+			printf("\r\n");
+			break;
+		default:
+			break;
+		}		
+	}
+}
 
 
 

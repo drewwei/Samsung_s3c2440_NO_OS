@@ -9,26 +9,34 @@ int fatfs_app(void)
     FRESULT res;        /* API result code */
     UINT bw;            /* Bytes written */
     UINT br;            /* Bytes read */
+
     printf("fatfs_app\r\n");
     
-    /* Gives a work area to the default drive */
     res = f_mount(&fs, "0:", 1);
-    if (res) 
+    if(res)
     {
-        printf("f_mount fail,res:%d\r\n",res);
-        return res;
-    }
-    /* Format the default drive with default parameters */
-	res = f_mkfs("0:", 0, work, sizeof(work));
-    if (res) 
-    {
-        printf("f_mkfs fail,res:%d\r\n",res);
-        return res;
-    }
-    
+        /* Format the default drive with default parameters */
+        res = f_mkfs("0:", 0, work, sizeof(work));
+        if (res) 
+        {
+            printf("f_mkfs fail,res:%d\r\n",res);
+            return res;
+        }
+        /* Gives a work area to the default drive */
+        res = f_mount(&fs, "0:", 1);
+        if (res) 
+        {
+            printf("f_mount fail,res:%d\r\n",res);
+            return res;
+        }
 
+        printf("f_mount fail first\r\n");
+    }
+
+
+#if  1    
     /* Create a file as new */
-    res = f_open(&fil, "hello.txt", FA_CREATE_NEW | FA_WRITE);
+    res = f_open(&fil, "0:hello", FA_WRITE|FA_CREATE_ALWAYS);
     if (res) 
     {
         printf("f_open fail,res:%d\r\n",res);
@@ -43,30 +51,38 @@ int fatfs_app(void)
         printf("f_write fail,res:%d\r\n",res);
         return res;
     }
+    printf("bw:%d\r\n", bw);
     /* Close the file */
-    f_close(&fil);
-
+    res = f_close(&fil);
+    if(res)
+    {
+        printf("f_close fail res:%d\r\n",res);
+    }
+ 
+#endif
     /* Unregister work area */
     //f_mount(0, "1", 0);
 
-    res = f_open(&fil, "hello.txt", FA_READ);
+    int data[15];
+    res = f_open(&fil, "0:hello", FA_READ|FA_CREATE_ALWAYS);
     if (res) 
     {
-        printf("f_open READ fail\r\n");
+        printf("f_open READ fail res:%d\r\n",res);
         return res;
     }
 
-   res = f_read(&fil, work, 15, &br);
+   res = f_read(&fil, data, 15, &br);
     if (res) 
     {
-        printf("f_read READ fail\r\n");
+        printf("f_read READ fail res:%d\r\n",res);
         return res;
     }
-   printf("br:%d\r\n", br);
+   printf("br:%d\r\n", br); 
+   printf("work:%s\r\n", data);
 
    f_close(&fil);
 
-   f_mount(0, "0:", 0);
+   //f_mount(0, "0:", 0);
 
    return 0;
 }

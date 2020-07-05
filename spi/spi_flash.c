@@ -1,7 +1,7 @@
 #include "ctl_spi.h"
-#include "../include/s3c24xx.h"
-#include "../include/timer.h"
-#include "../include/stdio.h"
+#include "s3c24xx.h"
+#include "timer.h"
+#include "stdio.h"
 
 #define PAGELEN				256
 #define BLOCKSIZE			(64*1024)
@@ -192,7 +192,7 @@ static void Unprotect()
 
 
 /*页编程*/
-void  PageProgram(unsigned int addr, unsigned char *data, unsigned int size)
+void  Spi_Flash_Write(unsigned int addr, const unsigned char *data, unsigned int size)
 {
 	int i, ret;
 	WriteEnable();   //写是能
@@ -208,18 +208,18 @@ void  PageProgram(unsigned int addr, unsigned char *data, unsigned int size)
 	ret = BusyStatus();
 	if(ret) 
 	{
-		printf("Error,PageProgram BusyStatus timeout\r\n");
-	}//循环判断忙
+		printf("Error,Spi_Flash_Write BusyStatus timeout\r\n");
+	}
 }
 /*扇区编程*/
-int SectorProgram(unsigned int addr, unsigned char *data)
+int SectorProgram(unsigned int addr, const unsigned char *data)
 {
 	int i;
 	int secoff = addr%SECTORSIZE;
 	if(secoff != 0) return -1;	
 	for(i = 0; i < (SECTORSIZE/PAGELEN); i++)
 	{
-		PageProgram(addr + i*PAGELEN, &data[PAGELEN*i], PAGELEN);
+		Spi_Flash_Write(addr + i*PAGELEN, &data[PAGELEN*i], PAGELEN);
 	}
 	return 0;
 }
@@ -258,6 +258,9 @@ void SpiFlashReadData(unsigned int addr, unsigned char *data, int size)
 unsigned char buff[SECTORSIZE];
 void SpiFlashWriteData(unsigned int addr, const unsigned char *data, int size)
 {
+
+
+#if 0
 	int i;
 	int sectremain;
 	int dataremain;
@@ -266,13 +269,12 @@ void SpiFlashWriteData(unsigned int addr, const unsigned char *data, int size)
 	//int pageremain, curwritesize;
 	int sect  = addr/SECTORSIZE;
 	int secoff = addr%SECTORSIZE;
-	
+	//int block  = addr%BLOCKSIZE;
 	Unprotect(); //注意：擦除之前必需要去保护！！！
-	//BlockErase(blcok); //先确定擦除块！
+	//BlockErase(block); //先确定擦除块！
 	//SectorErase(sect);//再确定擦除哪页！	
 
 	SpiFlashReadData(sect*SECTORSIZE, buff, SECTORSIZE);	/* 先读取要写的扇区 */
-
 	SectorErase(sect); /* 然后擦除该扇区 */
 
 	sectremain = sect - secoff; 
@@ -302,7 +304,7 @@ void SpiFlashWriteData(unsigned int addr, const unsigned char *data, int size)
 		{
 			sect++;
 			SectorErase(sect);//擦除哪个扇区！
-			SectorProgram(sect*SECTORSIZE, data[sectremain + SECTORSIZE*i]);	/* 从数组第sectremain个数据开始写入*/
+			SectorProgram(sect*SECTORSIZE, &data[sectremain + SECTORSIZE*i]);	/* 从数组第sectremain个数据开始写入*/
 			i++;
 		}
 		sect++;
@@ -314,10 +316,17 @@ void SpiFlashWriteData(unsigned int addr, const unsigned char *data, int size)
 		}
 		SectorProgram(sect*SECTORSIZE, buff);
 	}
-	
-#if 0
+#else
+	int blcok, sect;
+	int pageremain, curwritesize;
+	blcok = addr/BLOCKSIZE;
+	sect  = addr/SECTORSIZE;
+	//Unprotect(); //注意：擦除之前必需要去保护！！！
+	//BlockErase(blcok); //先确定擦除块！
+	SectorErase(sect);//再确定擦除哪页！
+		
 	while(size > 0)
-	{			
+	{
 		pageremain = PAGELEN - addr%PAGELEN; //pageremain一页可写的字节数,当addr+CurWriteSize后%PAGELEN必然为0;
 		if(size <= pageremain) //如果写入的数据少于一页中可写的个数
 		{
@@ -326,11 +335,10 @@ void SpiFlashWriteData(unsigned int addr, const unsigned char *data, int size)
 		else{
 			curwritesize = pageremain; //当col一开始不为0时,第一次循环pageremain值为PAGELEN - addr%PAGELEN，第二次循环时必然为PAGELEN，addr%PAGELEN=0;			
 		}
-		PageProgram(addr, data, curwritesize);//写数据
+		Spi_Flash_Write(addr, data, curwritesize);//写数据
 		addr += curwritesize;
 		data += curwritesize;
 		size -= curwritesize;
-
 	}
 #endif
 }

@@ -72,7 +72,6 @@ void SPI_SendByte(unsigned char c)
 /**/
 unsigned char SPI_RevByte()
 {
-	int ret;
 	SPTDAT1 = 0xff;
 	SPIStatus();
 	return SPRDAT1;
@@ -86,7 +85,6 @@ void ConfigSPI(int mode)
 	GPIO_SPI_Init();
 	SetClockMode(mode);
 	SetPrescalerVal();
-	//InitSpiFlash();
 }
 
 

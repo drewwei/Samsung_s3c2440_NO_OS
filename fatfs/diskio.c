@@ -17,7 +17,7 @@
 //#define DEV_MMC		1	/* Example: Map MMC/SD card to physical drive 1 */
 #define DEV_USB		2	/* Example: Map USB MSD to physical drive 2 */
 
-#define SECTOR_SIZE			4096
+#define SECTOR_SIZE			512
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -121,8 +121,7 @@ DRESULT disk_read (
 
 	return RES_PARERR;
 }
-
-
+	
 
 /*-----------------------------------------------------------------------*/
 /* Write Sector(s)                                                       */
@@ -138,7 +137,7 @@ DRESULT disk_write (
 )
 {
 	//int result;
-	unsigned int addr = sector*SECTOR_SIZE;
+	int i = 0;
 	switch (pdrv) {
 	case DEV_RAM :
 		// translate the arguments here
@@ -151,9 +150,11 @@ DRESULT disk_write (
 
 	case DEV_FLASH :
 		// translate the arguments here
-	
-	
-			SpiFlashWriteData(addr, buff, count*SECTOR_SIZE);			
+			for(i = 0; i < count; i++)
+			{
+				SpiFlashWriteData(SECTOR_SIZE*(sector + i), &buff[SECTOR_SIZE * i], SECTOR_SIZE);	
+			}
+					
 
 		// translate the reslut code here
 
@@ -199,7 +200,7 @@ DRESULT disk_ioctl (
 			switch (cmd)
 			{
 			case GET_SECTOR_COUNT:
-				*(LBA_t *)buff = 512;
+				*(LBA_t *)buff = 4096;
 				res = RES_OK;
 				break;
 			case GET_SECTOR_SIZE:
@@ -207,10 +208,13 @@ DRESULT disk_ioctl (
 				res = RES_OK;
 				break;
 			case GET_BLOCK_SIZE:
-				*(DWORD *)buff = 1;
+				*(DWORD *)buff = 8;
 				res = RES_OK;
 				break;
 			case CTRL_SYNC:
+				res = RES_OK;
+				break;
+			case CTRL_TRIM:
 				res = RES_OK;
 				break;
 			default:

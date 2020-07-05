@@ -39,7 +39,6 @@ __build : $(subdir-y) built-in.o
 
 $(subdir-y):
 	make -C $@ -f $(TOPDIR)/Makefile.build
-
 built-in.o : $(cur_objs) $(subdir_objs)
 	$(LD) -r -o $@ $^
 

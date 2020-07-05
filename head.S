@@ -4,12 +4,12 @@
 #define MEM_CTL_BASE    0x48000000
 #define FCLOCK_HCLOCK_PCLOCK_1_4_8		0x5
 #define FCLOCK_HCLOCK_PCLOCK_1_4_4		0x4
-#define    Svc                0xd3
+#define    SVC                0xd3
 #define    IRQ                0xd2
 
 .extern     main
 .global _start
-_start:
+_start:						/* 建立异常向量表 */
 	b reset
 
 @ 0x04: 未定义指令中止模式的向量地址
@@ -39,10 +39,9 @@ HandleNotUsed:
 HandleFIQ:
     b   HandleFIQ
 
-	
-reset:
+.balignl 16,0xdeadbeef
 
-	
+reset:	
 	ldr r0, =0x53000000		@关看门狗
 	mov r1, #0
 	str r1, [r0]
@@ -131,12 +130,12 @@ run_in_sdram:
 	
 	msr cpsr_c, #IRQ        	@ 进入中断模式
 	ldr sp, =0x33000000 		@ 设置中断模式栈指针  @此处曾经少写一个0导致中断后程序从新启动
-	msr cpsr_c, #Svc        	@ 进入管理模式
+	msr cpsr_c, #SVC        	@ 进入管理模式
 	ldr sp, =0x34000000
 	
 	
 	ldr lr, =halt
-	ldr pc, =main
+	ldr pc, =main		/* 绝对跳转，跳到sdram中 */
 halt:
 	b halt
 	

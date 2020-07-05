@@ -46,7 +46,7 @@ int main(void)
 	init_timer0();				/*初始化定时器0*/
 	init_timer4(&timer);  		/*初始化定时器4*/
 	ConfigSPI(0);				/* 配置SPI */
-
+	InitSpiFlash();
 	init_s3c2440_i2c_controller(&s3c2440_i2c_controller);   /*初始化s3c2440 IIC主机控制器结构体*/
 	ret = register_i2c_controller(&s3c2440_i2c_controller); /*注册IIC 主机控制器*/
 	if(ret == -1)
@@ -83,18 +83,10 @@ int main(void)
 
 	glob_func = led_blink;
 
-	const unsigned char buff1[] = "do you love me?";
-	unsigned char buff2[30];
-	int i;
-	//unsigned char buff3 = 0x3;
-	SpiFlashWriteData(0, buff1, sizeof(buff1));
-	SpiFlashReadData(0, buff2, 30);
-	for(i = 0; i < 30; i++)
-	{
-		printf("%#02x", buff2[i]);
-	}
-	printf("\r\n");
-	printf("buff2:%s\r\n",buff2);
+	
+	fatfs_app();	
+
+
 #if 0
 	spi_flash();
 	play_sound();	/* 播放音频 */
@@ -108,7 +100,7 @@ int main(void)
 
 
 
-	i2c_app();	/* iic操作 */
+	//i2c_app();	/* iic操作 */
 #endif
 
 	while(1) 
